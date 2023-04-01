@@ -1,7 +1,20 @@
 import React, { Component } from 'react'
 import NewsItems from "./NewsItems"
+import Spinner from "../components/Spinner"
+import PropTypes from 'prop-types'
 
 export class News extends Component {
+  static defaultProps = {
+    country: "in",
+    pageSize: 3,
+    category: "business"
+  }
+  static propTypes = {
+    country: PropTypes.string,
+    pageSize: PropTypes.number,
+    category: PropTypes.string
+  }
+
   constructor() {
     super();
     this.state = {
@@ -12,45 +25,59 @@ export class News extends Component {
   }
 
   async componentDidMount() {
-    let url = "https://newsapi.org/v2/top-headlines?country=in&apiKey=7ad68a3123654c17b9caf03019dbd6c6&page=1";
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=7ad68a3123654c17b9caf03019dbd6c6&page=1&pageSize=${this.props.pageSize}`;
+    this.setState({ loading: true })
     let data = await fetch(url);
     let parseData = await data.json();
     console.log(parseData);
-    this.setState({ articles: parseData.articles })
+    this.setState({
+      articles: parseData.articles,
+      totalResults: parseData.totalResults,
+      loading: false
+    })
   }
 
-  async preClickHandler = () => {
-    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=7ad68a3123654c17b9caf03019dbd6c6&page=${this.state.page - 1}`;
+  preClickHandler = async () => {
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=7ad68a3123654c17b9caf03019dbd6c6&page=${this.state.page - 1}&pageSize=${this.props.pageSize}`;
+    this.setState({ loading: true })
     let data = await fetch(url);
     let parseData = await data.json();
 
     this.setState({
       page: this.state.page - 1,
-      articles: parseData.articles
+      articles: parseData.articles,
+      loading: false
     })
   }
-  async nextClickHandler = () => {
-    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=7ad68a3123654c17b9caf03019dbd6c6&page=${this.state.page + 1}`;
-    let data = await fetch(url);
-    let parseData = await data.json();
+  nextClickHandler = async () => {
+    if (!(this.state.page + 1 > Math.ceil(this.state.totalResults / this.props.pageSize))) {
+      let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=7ad68a3123654c17b9caf03019dbd6c6&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`;
+      this.setState({ loading: true })
+      let data = await fetch(url);
+      let parseData = await data.json();
 
-    this.setState({
-      page: this.state.page + 1,
-      articles: parseData.articles
-    })
+      this.setState({
+        page: this.state.page + 1,
+        articles: parseData.articles,
+        loading: false
+      })
+    }
   }
 
   render() {
     return (
       <>
+        {this.state.loading && <Spinner />}
+
         <div className='p-20 flex flex-row flex-wrap justify-between'>
-          {this.state.articles.map((e) => {
+          {!this.state.loading && this.state.articles.map((e) => {
             return <NewsItems key={e.url} title={e.title} description={e.description} imgUrl={e.urlToImage} newsUrl={e.url} />
           })}
         </div>
+
         <div className="p-20 flex justify-evenly">
-          <button disabled={this.state.page<=1} className='py-2 px-4 bg-zinc-800 text-zinc-200 font-bold rounded-lg' onClick={this.preClickHandler}>&larr; Previous</button>
-          <button className='py-2 px-4 bg-zinc-800 text-zinc-200 font-bold rounded-lg' onClick={this.nextClickHandler}>Next &rarr;</button>
+          <button disabled={this.state.page <= 1} className='py-2 px-4 bg-zinc-800 text-zinc-200 font-bold rounded-lg' onClick={this.preClickHandler}>&larr; Previous</button>
+          <button disabled={this.state.page + 1 > Math.ceil(this.state.totalResults / this.props.pageSize)} className='py-2 px-4 bg-zinc-800 text-zinc-200 font-bold rounded-lg' onClick={this.nextClickHandler}>Next &rarr;</button>
         </div>
       </>
     )
