@@ -11,7 +11,7 @@ export default class Navbar extends Component {
       //               <a href="/">Contact</a>
       //           </div>
       //       </nav>
-      <nav className='h-16 px-20 bg-zinc-800 text-zinc-200 font-semibold flex flex-row justify-between items-center rounded-b-lg drop-shadow transition'>
+      <nav className='h-16 px-20 bg-zinc-800 text-zinc-200 font-semibold flex justify-between items-center rounded-b-lg drop-shadow transition'>
                 <h1 className='font-bold'>{this.props.title}</h1>
                 <div className="flex space-x-6">
                     <a href="/">Business</a>
@@ -22,7 +22,7 @@ export default class Navbar extends Component {
                     <a href="/">Sports</a>
                     <a href="/">Technology</a>
                 </div>
-                <div className="flex space-x-6 border py-1 px-4 rounded-lg">
+                <div className="flex space-x-6">
                     <a href="/">About</a>
                     <a href="/">All Projects</a>
                     <a href="/">Contact</a>

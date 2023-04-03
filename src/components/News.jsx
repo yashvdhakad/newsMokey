@@ -69,7 +69,7 @@ export class News extends Component {
       <>
         {this.state.loading && <Spinner />}
 
-        <div className='p-20 flex flex-row flex-wrap justify-between'>
+        <div className='px-40 py-20 flex flex-col space-y-4'>
           {!this.state.loading && this.state.articles.map((e) => {
             return <NewsItems key={e.url} title={e.title} description={e.description} imgUrl={e.urlToImage} newsUrl={e.url} />
           })}
