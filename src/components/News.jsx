@@ -24,40 +24,33 @@ export class News extends Component {
     }
   }
 
-  async updateHandler() {
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=7ad68a3123654c17b9caf03019dbd6c6&page=1&pageSize=${this.props.pageSize}`;
+  async updateNews() {
+    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=7ad68a3123654c17b9caf03019dbd6c6&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     this.setState({ loading: true })
     let data = await fetch(url);
     let parseData = await data.json();
     this.setState({
+      totalResults: parseData.totalResults,
       articles: parseData.articles,
       loading: false
     })
   }
 
   async componentDidMount() {
-    this.updateHandler()
-
-    this.setState({
-      totalResults: parseData.totalResults,
-    })
+    this.updateNews();
   }
 
   preClickHandler = async () => {
-    this.updateHandler()
-
     this.setState({
       page: this.state.page - 1,
     })
+    this.updateNews();
   }
   nextClickHandler = async () => {
-    if (!(this.state.page + 1 > Math.ceil(this.state.totalResults / this.props.pageSize))) {
-      this.updateHandler()
-
-      this.setState({
-        page: this.state.page + 1,
-      })
-    }
+    this.setState({
+      page: this.state.page + 1,
+    })
+    this.updateNews();
   }
 
   render() {
@@ -67,7 +60,7 @@ export class News extends Component {
 
         <div className='px-40 py-20 flex flex-col space-y-4'>
           {!this.state.loading && this.state.articles.map((e) => {
-            return <NewsItems key={e.url} title={e.title} description={e.description} imgUrl={e.urlToImage} newsUrl={e.url} author={e.author} date={e.publishedAt} />
+            return <NewsItems key={e.url} title={e.title} description={e.description} imgUrl={e.urlToImage} newsUrl={e.url} source={e.source.name} date={e.publishedAt} />
           })}
         </div>
 
