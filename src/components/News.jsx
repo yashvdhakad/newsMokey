@@ -24,42 +24,38 @@ export class News extends Component {
     }
   }
 
-  async componentDidMount() {
+  async updateHandler() {
     let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=7ad68a3123654c17b9caf03019dbd6c6&page=1&pageSize=${this.props.pageSize}`;
     this.setState({ loading: true })
     let data = await fetch(url);
     let parseData = await data.json();
-    console.log(parseData);
     this.setState({
       articles: parseData.articles,
-      totalResults: parseData.totalResults,
       loading: false
+    })
+  }
+
+  async componentDidMount() {
+    this.updateHandler()
+
+    this.setState({
+      totalResults: parseData.totalResults,
     })
   }
 
   preClickHandler = async () => {
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=7ad68a3123654c17b9caf03019dbd6c6&page=${this.state.page - 1}&pageSize=${this.props.pageSize}`;
-    this.setState({ loading: true })
-    let data = await fetch(url);
-    let parseData = await data.json();
+    this.updateHandler()
 
     this.setState({
       page: this.state.page - 1,
-      articles: parseData.articles,
-      loading: false
     })
   }
   nextClickHandler = async () => {
     if (!(this.state.page + 1 > Math.ceil(this.state.totalResults / this.props.pageSize))) {
-      let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=7ad68a3123654c17b9caf03019dbd6c6&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`;
-      this.setState({ loading: true })
-      let data = await fetch(url);
-      let parseData = await data.json();
+      this.updateHandler()
 
       this.setState({
         page: this.state.page + 1,
-        articles: parseData.articles,
-        loading: false
       })
     }
   }
@@ -71,7 +67,7 @@ export class News extends Component {
 
         <div className='px-40 py-20 flex flex-col space-y-4'>
           {!this.state.loading && this.state.articles.map((e) => {
-            return <NewsItems key={e.url} title={e.title} description={e.description} imgUrl={e.urlToImage} newsUrl={e.url} />
+            return <NewsItems key={e.url} title={e.title} description={e.description} imgUrl={e.urlToImage} newsUrl={e.url} author={e.author} date={e.publishedAt} />
           })}
         </div>
 
