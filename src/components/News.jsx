@@ -7,7 +7,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 export class News extends Component {
   static defaultProps = {
     country: "in",
-    pageSize: 3,
+    pageSize: 10,
     category: "business"
   }
   static propTypes = {
@@ -27,6 +27,7 @@ export class News extends Component {
   }
 
   async updateNews() {
+    this.props.setProgress(0);
     const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=7ad68a3123654c17b9caf03019dbd6c6&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     this.setState({ loading: true })
     let data = await fetch(url);
@@ -36,6 +37,7 @@ export class News extends Component {
       articles: parseData.articles,
       loading: false
     })
+    this.props.setProgress(100);
   }
 
   async componentDidMount() {
@@ -78,7 +80,7 @@ export class News extends Component {
         >
           <div className='px-40 py-20 flex flex-col space-y-4'>
             {this.state.articles.map((e) => {
-              return <NewsItems key={e.url} title={e.title} description={e.description} imgUrl={e.urlToImage} newsUrl={e.url} source={e.source.name} date={e.publishedAt} />
+              return <NewsItems Items key={e.url} title={e.title} description={e.description} imgUrl={e.urlToImage} newsUrl={e.url} source={e.source.name} date={e.publishedAt} />
             })}
           </div>
         </InfiniteScroll>
