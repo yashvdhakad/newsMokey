@@ -11,7 +11,7 @@ import LoadingBar from 'react-top-loading-bar'
 import React, { Component } from 'react'
 
 export default class App extends Component {
-  pageSize = 10;
+  pageSize = 5;
   state = {
     progress: 0
   }

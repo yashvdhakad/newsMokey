@@ -12,7 +12,7 @@ export default class Navbar extends Component {
       //               <Link to="/">Contact</Link>
       //           </div>
       //       </nav>
-      <nav className='h-16 px-20 bg-zinc-800 text-zinc-200 font-semibold flex justify-between items-center rounded-b-lg drop-shadow transition'>
+      <nav className='sticky top-0 z-10 h-16 px-20 bg-zinc-800 text-zinc-200 font-semibold flex justify-between items-center rounded-b-lg drop-shadow transition'>
                 <h1 className='font-bold'><Link to="/">{this.props.title}</Link></h1>
                 <div className="flex space-x-6">
                     <Link to="/">General</Link>
